@@ -3,3 +3,4 @@ uvicorn
 python-dotenv
 pymupdf
 python-multipart
+langchain-text-splitters
