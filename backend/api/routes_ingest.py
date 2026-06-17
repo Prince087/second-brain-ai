@@ -4,6 +4,7 @@ import os
 
 from backend.ingestion.pdf_parser import extract_text_from_pdf
 from backend.ingestion.chunker import chunk_text
+from backend.ingestion.embedder import embed_chunks
 
 router = APIRouter()
 
@@ -19,11 +20,14 @@ async def ingest_pdf(file: UploadFile = File(...)):
 
     chunks = chunk_text(extracted_text)
 
+    embeddings = embed_chunks(chunks)
+
     return {
-        "filename" : file.filename,
-        "num_characters" : len(extracted_text),
-        "num_chunks" : len(chunks),
-        "first_3_chunks" : chunks[:3]
+        "filename": file.filename,
+        "num_chunks": len(chunks),
+        "embedding_dim": len(embeddings[0]),
+        "sample_chunk": chunks[0],
+        "sample_vector_preview": embeddings[0][:5]
     }
 
 
