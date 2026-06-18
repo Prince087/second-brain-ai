@@ -1,0 +1,47 @@
+import chromadb
+from typing import List
+
+# Initialize ChromaDB client — stores data in a local folder
+client = chromadb.PersistentClient(path = "backend/chroma_db")
+
+def get_or_create_collection(collection_name: str = "second_brain"):
+    collection = client.get_or_create_collection(
+        name = collection_name,
+        metadata = {"hnsw:space" : "cosine"}
+
+    )
+    return collection
+
+def store_chunks(chunks: List[str], embeddings: List[List[float]], doc_id: str, collection_name: str = "second_brain"):
+    collection = get_or_create_collection(collection_name)
+    ids = [f"{doc_id}_chunk_{i}" for i in range(len(chunks))]
+
+     # Build metadata for each chunk (so we know which doc it came from)
+    metadatas = [{"doc_id": doc_id, "chunk_index": i} for i in range(len(chunks))]
+
+    collection.add(
+        ids=ids,
+        embeddings=embeddings,
+        documents=chunks,
+        metadatas=metadatas
+    )
+
+    return {"stored": len(chunks), "doc_id": doc_id}
+
+def query_collection(
+    query_embedding: List[float],
+    n_results: int = 5,
+    collection_name: str = "second_brain"
+):
+    """
+    Takes a query vector, returns the top-n most similar chunks.
+    """
+    collection = get_or_create_collection(collection_name)
+
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"]
+    )
+
+    return results

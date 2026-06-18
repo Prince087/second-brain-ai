@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from backend.api import routes_ingest
+from backend.api import routes_ingest , routes_query
 
 app = FastAPI(title = "Second Brain AI")
 
 app.include_router(routes_ingest.router)
+app.include_router(routes_query.router)
 
 @app.get("/")
 def root():

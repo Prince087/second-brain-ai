@@ -5,6 +5,7 @@ import os
 from backend.ingestion.pdf_parser import extract_text_from_pdf
 from backend.ingestion.chunker import chunk_text
 from backend.ingestion.embedder import embed_chunks
+from backend.retrieval.vector_store import store_chunks
 
 router = APIRouter()
 
@@ -22,12 +23,18 @@ async def ingest_pdf(file: UploadFile = File(...)):
 
     embeddings = embed_chunks(chunks)
 
+    # Store in ChromaDB
+    doc_id = os.path.splitext(file.filename)[0]  # "Unit 1.pdf" → "Unit 1"
+    result = store_chunks(chunks, embeddings, doc_id)
+
+
     return {
         "filename": file.filename,
         "num_chunks": len(chunks),
         "embedding_dim": len(embeddings[0]),
-        "sample_chunk": chunks[0],
-        "sample_vector_preview": embeddings[0][:5]
+        "stored": result["stored"],
+        "doc_id": result["doc_id"],
+        "message": "PDF successfully ingested into Second Brain!"
     }
 
 
