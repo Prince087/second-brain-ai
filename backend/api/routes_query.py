@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from backend.ingestion.embedder import embed_single
 from backend.retrieval.vector_store import query_collection
+from backend.generation.llm import generate_answer
 
 router = APIRouter()
 
@@ -23,9 +24,8 @@ def query_brain(request: QueryRequest):
     metadatas = results["metadatas"][0]
     distances = results["distances"][0]
 
-    return {
-        "question": request.question,
-        "results": [
+    
+    retrieved_chunks = [
             {
                 "chunk": chunks[i],
                 "doc_id": metadatas[i]["doc_id"],
@@ -34,4 +34,13 @@ def query_brain(request: QueryRequest):
             }
             for i in range(len(chunks))
         ]
+    
+
+    answer = generate_answer(request.question, retrieved_chunks)
+
+    return {
+        "question": request.question,
+        "answer": answer,
+        "sources": retrieved_chunks
     }
+

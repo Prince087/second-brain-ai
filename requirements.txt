@@ -6,3 +6,4 @@ python-multipart
 langchain-text-splitters
 sentence-transformers
 chromadb
+groq
