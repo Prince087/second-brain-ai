@@ -60,25 +60,39 @@ def ingest_notes(note: NoteRequest):
         "message": "Note successfully ingested into Second Brain!"
     }
 
-from backend.retrieval.vector_store import get_or_create_collection
+from backend.retrieval.vector_store import store_chunks, get_or_create_collection, delete_document
+from fastapi import HTTPException
 
 @router.get("/docs")
 def list_docs():
-    """
-    Returns all unique documents stored in ChromaDB.
-    """
+    """Returns all unique documents stored in ChromaDB."""
     collection = get_or_create_collection()
     results = collection.get(include=["metadatas"])
 
-    # Extract unique doc_ids
-    doc_ids = list(set(
-        meta["doc_id"] for meta in results["metadatas"]
-    ))
+    if not results["metadatas"]:
+        return {"total_chunks": 0, "documents": [], "num_documents": 0}
+
+    # Count chunks per document
+    doc_chunk_counts = {}
+    for meta in results["metadatas"]:
+        doc_id = meta["doc_id"]
+        doc_chunk_counts[doc_id] = doc_chunk_counts.get(doc_id, 0) + 1
 
     return {
         "total_chunks": len(results["metadatas"]),
-        "documents": doc_ids,
-        "num_documents": len(doc_ids)
+        "num_documents": len(doc_chunk_counts),
+        "documents": [
+            {"doc_id": doc_id, "num_chunks": count}
+            for doc_id, count in doc_chunk_counts.items()
+        ]
     }
+
+@router.delete("/docs/{doc_id}")
+def delete_doc(doc_id: str):
+    """Deletes all chunks for a specific document."""
+    result = delete_document(doc_id)
+    if result["deleted"] == 0:
+        raise HTTPException(status_code=404, detail=f"Document '{doc_id}' not found")
+    return result
 
 

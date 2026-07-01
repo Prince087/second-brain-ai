@@ -45,3 +45,25 @@ def query_collection(
     )
 
     return results
+
+def delete_document(doc_id: str, collection_name: str = "second_brain") -> dict:
+
+    
+    #Deletes all chunks belonging to a specific document.
+    
+    collection = get_or_create_collection(collection_name)
+
+    # Get all chunk IDs that belong to this doc
+    results = collection.get(where={"doc_id": doc_id})
+
+    if not results["ids"]:
+        return {"deleted": 0, "doc_id": doc_id, "message": "Document not found"}
+
+    # Delete them all
+    collection.delete(ids=results["ids"])
+
+    return {
+        "deleted": len(results["ids"]),
+        "doc_id": doc_id,
+        "message": f"Deleted {len(results['ids'])} chunks for '{doc_id}'"
+}

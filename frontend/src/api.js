@@ -7,6 +7,7 @@ export async function ingestPDF(file) {
     method: "POST",
     body: formData,
   });
+  if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
 
@@ -16,6 +17,7 @@ export async function ingestNote(title, content) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title, content }),
   });
+  if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
 
@@ -25,10 +27,20 @@ export async function queryBrain(question, n_results = 3) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question, n_results }),
   });
+  if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
 
 export async function listDocs() {
   const res = await fetch(`${API_URL}/docs`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function deleteDoc(doc_id) {
+  const res = await fetch(`${API_URL}/docs/${encodeURIComponent(doc_id)}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
