@@ -63,7 +63,7 @@ def ingest_notes(note: NoteRequest):
 from backend.retrieval.vector_store import store_chunks, get_or_create_collection, delete_document
 from fastapi import HTTPException
 
-@router.get("/docs")
+@router.get("/documents")
 def list_docs():
     """Returns all unique documents stored in ChromaDB."""
     collection = get_or_create_collection()
@@ -87,7 +87,7 @@ def list_docs():
         ]
     }
 
-@router.delete("/docs/{doc_id}")
+@router.delete("/documents/{doc_id}")
 def delete_doc(doc_id: str):
     """Deletes all chunks for a specific document."""
     result = delete_document(doc_id)

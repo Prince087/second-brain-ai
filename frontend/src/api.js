@@ -32,13 +32,13 @@ export async function queryBrain(question, n_results = 3) {
 }
 
 export async function listDocs() {
-  const res = await fetch(`${API_URL}/docs`);
+  const res = await fetch(`${API_URL}/documents`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
 
 export async function deleteDoc(doc_id) {
-  const res = await fetch(`${API_URL}/docs/${encodeURIComponent(doc_id)}`, {
+  const res = await fetch(`${API_URL}/documents/${encodeURIComponent(doc_id)}`, {
     method: "DELETE",
   });
   if (!res.ok) throw new Error(await res.text());
