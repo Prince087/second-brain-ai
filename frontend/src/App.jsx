@@ -16,7 +16,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+        <div className="max-w-screen-xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-gray-900">🧠 Second Brain AI</h1>
             <p className="text-sm text-gray-500">Your personal AI knowledge base</p>
@@ -27,10 +27,10 @@ export default function App() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-6 flex gap-6">
+      <div className="max-w-screen-xl mx-auto px-6 py-6 flex gap-6">
 
         {/* Sidebar */}
-        <aside className="w-80 shrink-0 space-y-4">
+        <aside className="w-96 shrink-0 space-y-4">
           {/* Ingest card */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <h2 className="text-sm font-semibold text-gray-800 mb-4">📥 Add to Your Brain</h2>

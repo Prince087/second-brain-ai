@@ -1,8 +1,11 @@
+import os
 import chromadb
 from typing import List
 
-# Initialize ChromaDB client — stores data in a local folder
-client = chromadb.PersistentClient(path = "backend/chroma_db")
+# Use persistent disk path on Render, local path in development
+CHROMA_PATH = os.getenv("CHROMA_PATH", "backend/chroma_db")
+
+client = chromadb.PersistentClient(path=CHROMA_PATH)
 
 def get_or_create_collection(collection_name: str = "second_brain"):
     collection = client.get_or_create_collection(

@@ -20,7 +20,7 @@ def query_brain(request: QueryRequest):
         # Find most similar chunks
         results = query_collection(query_embedding, n_results=request.n_results)
 
-        # Format response cleanly
+        # Format response 
         chunks = results["documents"][0]
         metadatas = results["metadatas"][0]
         distances = results["distances"][0]
